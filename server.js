@@ -13,16 +13,20 @@ const weatherData = require('./data/weather.json');
 //console.log(weatherData);
 
 //create a port
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3002;
 
 
 app.get('/weather', (req, res) => {
 
-  let searchQuery = req.query.searchQuery; //let {searchQuery} = req.query
-  const city = weatherData.find(city => { city.city_name.toLowerCase() === searchQuery.toLowerCase() });
+  // let searchQuery = req.query.searchQuery; //let {searchQuery} = req.query
+  let {searchQuery,lat,lon}=req.query;// to request there values
 
+  const city = weatherData.find(item=> item.city_name.toLowerCase() === searchQuery.toLowerCase() );
+console.log(city)
   try {
     const weatherArr = city.data.map(item => new Forecast(item))
+    // weather: weatherData.data,
+
     res.status(200).send(weatherArr);
   } catch (err) {
    handleError(err, res)
