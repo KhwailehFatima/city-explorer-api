@@ -1,52 +1,33 @@
 'use strict';
-
+const axios = require('axios');
 const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
-
+//my application using express
 const app = express();
+
+//middleware to allow cross origin requests
 app.use(cors());
 
+//require the modules
+const {handleWeather}=require('./module/weather');
+const {handleMovie}=require('./module/movies');
 //create a port
 const port = process.env.PORT || 3002;
 
-//require a weather variable
-const weatherData = require('./data/weather.json');
+
+app.get('/weather', handleWeather);
+app.get('/movies', handleMovie);
+
+//for anything that doesnt exist in code
+app.get('*', (req, res) => { res.status(404).send('Page not found!'); });
 
 
-app.get('/weather', (req, res) => {
+//function to send an error if found it will be deployed in the catch
+// function handleError(error, res) {
+//   res.status(500).send({ error: 'Something went wrong' });
+// }
 
-  // let searchQuery = req.query.searchQuery; //let {searchQuery} = req.query
-  const {searchQuery,lat,lon}=req.query;// to request there values
-
-  const city = weatherData.find(item=> item.city_name.toLowerCase() === searchQuery.toLowerCase() );
-
-  try {
-    const weatherArr = city.data.map(item => new Forecast(item));
-    res.status(200).send(weatherArr);
-
-  } catch (err) {
-    handleError(err, res);
-  }
-}
-);
-
-
-
-// function to handle error
-function handleError(error, res) {
-  console.log(error)
-  res.status(500).send('Something went wrong');
-}
-
-
-// new object
-class Forecast {
-  constructor(day) {
-    this.date = day.valid_date;
-    this.description = day.weather.description;
-  }
-}
 
 app.listen(port, () => {
   console.log(`listening to port ${port}`);
