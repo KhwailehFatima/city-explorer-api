@@ -1,20 +1,25 @@
 const axios = require('axios');
 
+const movieCache={};
+
 async function handleMovie(req,res){
   const {searchQuery}=req.query;
-  console.log(searchQuery);
+  if (movieCache[searchQuery]!==undefined) {
+    res.send(200).send(movieCache[searchQuery]);
+  } else {
 
-  //https://api.themoviedb.org/3/search/movie?api_key=30f44418c0a68b803dede650cbc9098e&query=amman
-  const movieURL=`https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${searchQuery}`;
-  const cityMovie= await axios.get(movieURL);
-  console.log(cityMovie)
-  try {
-    const movieArr = cityMovie.data.results.map(item => new Movie(item));
-    //console.log(movieArr)
-    res.status(200).send(movieArr);
+    //https://api.themoviedb.org/3/search/movie?api_key=30f44418c0a68b803dede650cbc9098e&query=amman
+    const movieURL=`https://api.themoviedb.org/3/search/movies?api_key=${process.env.MOVIE_API_KEY}&query=${searchQuery}`;
+    const cityMovie= await axios.get(movieURL);
+    console.log(cityMovie);
+    try {
+      const movieArr = cityMovie.data.results.map(item => new Movie(item));
+      //console.log(movieArr)
+      res.status(200).send(movieArr);
 
-  } catch (err) {
-    res.status(400).send(error);
+    } catch (err) {
+      res.status(400).send(error);
+    }
   }
 }
 
