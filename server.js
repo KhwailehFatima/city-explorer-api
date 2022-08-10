@@ -1,4 +1,5 @@
 'use strict';
+
 const axios = require('axios');
 const express = require('express');
 require('dotenv').config();
@@ -11,13 +12,14 @@ app.use(cors());
 
 //require the modules
 const {handleWeather}=require('./module/weather');
-const {handleMovie}=require('./module/movies');
+const {handleMovie}=require('./module/movie');
+ 
 //create a port
 const port = process.env.PORT || 3002;
 
 
-app.get('/weather', handleWeather);
-app.get('/movies', handleMovie);
+app.get('/weather', handleWeather);//localhost:3001/weather?lat=${}&lon=${}
+app.get('/movie', handleMovie);//
 
 //for anything that doesnt exist in code
 app.get('*', (req, res) => { res.status(404).send('Page not found!'); });
